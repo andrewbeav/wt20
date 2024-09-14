@@ -17,7 +17,6 @@
 #include "freertos/timers.h"
 #include "nvs_flash.h"
 #include "esp_wifi.h"
-#include "esp_log.h"
 #include "esp_now.h"
 #include "esp_mac.h"
 #include "driver/gpio.h"
@@ -52,7 +51,7 @@ void app_main(void)
     /* get mac and determine whether to register mac1 or mac2 as a peer */
     uint8_t device_mac[6U];
     espnow_link_get_device_mac(device_mac);
-    ESP_LOGI(TAG, "Device mac = " MACSTR, MAC2STR(device_mac));
+    logging_log(LOG_LEVEL_INFO, TAG, "Device mac = " MACSTR, MAC2STR(device_mac));
     bool is_mac1 = (memcmp(device_mac, mac1, 6U) == 0U);
     uint8_t *peer_mac = is_mac1 ? mac2 : mac1;
 
@@ -64,10 +63,8 @@ void app_main(void)
     for(int i = 0; i < 2000; i++)
     {
         sprintf(send_buffer, "Hello, message %d", i);
-        // espnow_link_command_peer(peer_mac, ESPNOW_LINK_COMMAND_SEND_STR, send_buffer);
         espnow_link_command_peer(peer_mac, ESPNOW_LINK_COMMAND_TOGGLE_LED, NULL);
-        // ESP_ERROR_CHECK(esp_now_send(NULL, (uint8_t*) send_buffer, strlen(send_buffer)));
-        vTaskDelay(pdMS_TO_TICKS(10U));
+        vTaskDelay(pdMS_TO_TICKS(100U));
     }
 
     ESP_ERROR_CHECK(esp_now_deinit());
