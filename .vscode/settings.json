@@ -2,7 +2,9 @@
     "idf.adapterTargetName": "esp32c6",
     "files.associations": {
         "blinker.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "logging.h": "c",
+        "gpio.h": "c"
     },
     "idf.flashType": "UART",
     "vim.useCtrlKeys": false,
