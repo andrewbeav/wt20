@@ -1,0 +1,10 @@
+{
+    "idf.adapterTargetName": "esp32c6",
+    "files.associations": {
+        "blinker.h": "c",
+        "stdint.h": "c"
+    },
+    "idf.flashType": "UART",
+    "vim.useCtrlKeys": false,
+    "vim.smartRelativeLine": true
+}
