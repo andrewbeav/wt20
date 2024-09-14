@@ -24,6 +24,8 @@
 
 #include "espnow_link.h"
 
+#include "logging.h"
+
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
