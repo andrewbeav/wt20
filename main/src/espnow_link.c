@@ -13,12 +13,12 @@
 #include "espnow_link.h"
 #include "nvs_flash.h"
 #include "esp_wifi.h"
-#include "esp_log.h"
 #include "esp_now.h"
 #include "esp_mac.h"
 #include <stdio.h>
 #include <string.h>
 #include "driver/gpio.h"
+#include "logging.h"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -46,13 +46,13 @@ void espnow_send_callback(const uint8_t* mac_addr, esp_now_send_status_t status)
     switch (status)
     {
     case ESP_NOW_SEND_SUCCESS:
-        ESP_LOGI(TAG, "Sent message to mac " MACSTR, MAC2STR(mac_addr));
+        logging_log(LOG_LEVEL_INFO, TAG, "Sent message to mac " MACSTR, MAC2STR(mac_addr));
         break;
     case ESP_NOW_SEND_FAIL:
-        ESP_LOGE(TAG, "Send message to mac " MACSTR " FAILED", MAC2STR(mac_addr));
+        logging_log(LOG_LEVEL_ERROR, TAG, "Send message to mac " MACSTR " FAILED", MAC2STR(mac_addr));
         break;
     default:
-        ESP_LOGE(TAG, "Invalid esp now status in send callback");
+        logging_log(LOG_LEVEL_ERROR, TAG, "Invalid esp now status in send callback");
         break;
     }
 }
@@ -60,7 +60,12 @@ void espnow_send_callback(const uint8_t* mac_addr, esp_now_send_status_t status)
 void espnow_receive_callback(const esp_now_recv_info_t* esp_now_info, const uint8_t* data, int data_len)
 {
     static uint32_t gpio_level = 0U;
-    ESP_LOGI(TAG, "got message from " MACSTR ", sent to " MACSTR, MAC2STR(esp_now_info->src_addr), MAC2STR(esp_now_info->des_addr));
+    logging_log(
+        LOG_LEVEL_INFO,
+        TAG,
+        "got message from " MACSTR ", sent to " MACSTR,
+        MAC2STR(esp_now_info->src_addr), MAC2STR(esp_now_info->des_addr)
+    );
     printf("message, datalen = %d: %.*s\n", data_len, data_len, data);
     switch (data[0])
     {
