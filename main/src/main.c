@@ -41,9 +41,9 @@ static uint8_t mac2[6] = {0x40, 0x4C, 0xCA, 0x4D, 0x67, 0xEC};
  ************************************/
 void app_main(void)
 {
-    /* Initialize gpio */
-    gpio_reset_pin(2U);
-    gpio_set_direction(2U, GPIO_MODE_OUTPUT);
+    // /* Initialize gpio */
+    // gpio_reset_pin(2U);
+    // gpio_set_direction(2U, GPIO_MODE_OUTPUT);
 
     /* Initialize espnow link */
     espnow_link_init();
@@ -60,14 +60,23 @@ void app_main(void)
 
     /* send 250 messages to peer*/
     char send_buffer[250U];
-    for(int i = 0; i < 2000; i++)
+    ESPNOW_LINK_MSG_T recv_msg;
+    for(int i = 0; i < 200; i++)
     {
         sprintf(send_buffer, "Hello, message %d", i);
-        espnow_link_command_peer(peer_mac, ESPNOW_LINK_COMMAND_TOGGLE_LED, NULL);
-        vTaskDelay(pdMS_TO_TICKS(100U));
+        espnow_link_write(peer_mac, (const uint8_t*)send_buffer, strlen(send_buffer));
+        
+        if (espnow_link_messages_available())
+        {
+            printf("Messages available!\n");
+            espnow_link_read(&recv_msg);
+
+            printf("%s\n", recv_msg.data);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1000U));
     }
 
-    ESP_ERROR_CHECK(esp_now_deinit());
-    ESP_ERROR_CHECK(esp_wifi_stop());
+    espnow_link_close();
 
 }
