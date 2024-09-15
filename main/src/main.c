@@ -13,17 +13,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/timers.h"
-#include "nvs_flash.h"
-#include "esp_wifi.h"
-#include "esp_now.h"
 #include "esp_mac.h"
-#include "driver/gpio.h"
 
 #include "espnow_link.h"
-
 #include "logging.h"
+#include "gpio.h"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -41,9 +38,9 @@ static uint8_t mac2[6] = {0x40, 0x4C, 0xCA, 0x4D, 0x67, 0xEC};
  ************************************/
 void app_main(void)
 {
-    // /* Initialize gpio */
-    // gpio_reset_pin(2U);
-    // gpio_set_direction(2U, GPIO_MODE_OUTPUT);
+    /* Initialize gpio */
+    gpio_setup_pin(LED_PIN, GPIO_PIN_OUTPUT);
+    GPIO_VALUE_T current_led = GPIO_PIN_ON;
 
     /* Initialize espnow link */
     espnow_link_init();
@@ -60,21 +57,14 @@ void app_main(void)
 
     /* send 250 messages to peer*/
     char send_buffer[250U];
-    ESPNOW_LINK_MSG_T recv_msg;
-    for(int i = 0; i < 200; i++)
+    for(int i = 0; i < 2000; i++)
     {
         sprintf(send_buffer, "Hello, message %d", i);
-        espnow_link_write(peer_mac, (const uint8_t*)send_buffer, strlen(send_buffer));
-        
-        if (espnow_link_messages_available())
-        {
-            printf("Messages available!\n");
-            espnow_link_read(&recv_msg);
+        vTaskDelay(pdMS_TO_TICKS(100U));
 
-            printf("%s\n", recv_msg.data);
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(1000U));
+        gpio_set_pin_level(LED_PIN, current_led);
+        current_led = !current_led;
+        logging_log(LOG_LEVEL_VERBOSE, TAG, "set led to status %d", current_led);
     }
 
     espnow_link_close();
