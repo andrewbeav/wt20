@@ -60,17 +60,27 @@ WT20_ERR_T wt20_write(const uint8_t* peer_mac,
     return ret;
 }
 
-WT20_ERR_T wt20_protocol_function(void)
+WT20_ERR_T wt20_protocol_function(const WT20_MSG_T* msg_buffer)
 {
     WT20_ERR_T ret;
+    ESPNOW_LINK_MSG_T recv_msg;
 
     if (initialized)
     {
-        ret = WT20_ERR_NONE;
-
         if (espnow_link_messages_available())
         {
-            /* get message and process */
+            /* get message */
+            espnow_link_read(&recv_msg);
+
+            /* convert to WT20 format for higher level processing */
+            memcpy(&(msg_buffer->src_mac), recv_msg.recv_info.src_addr, 6U);
+            memcpy(&(msg_buffer->command), recv_msg.data, ESPNOW_DATA_BYTES);
+
+            ret = WT20_ERR_NONE;
+        }
+        else
+        {
+            ret = WT20_NO_DATA_AVAILABLE;
         }
     }
     else
@@ -105,4 +115,19 @@ WT20_ERR_T wt20_deinit(void)
     ret = (espnow_err = ESPNOW_LINK_ERR_NONE) ? WT20_ERR_NONE : WT20_DEINIT_FAILURE;
 
     return ret;
+}
+
+WT20_ERR_T wt20_get_device_mac(const uint8_t* buffer)
+{
+    
+    espnow_link_get_device_mac(buffer);
+
+    return WT20_ERR_NONE;
+}
+
+WT20_ERR_T wt20_add_contact(const uint8_t* mac)
+{
+    espnow_link_register_peer(mac);
+
+    return WT20_ERR_NONE;
 }

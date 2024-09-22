@@ -1,9 +1,9 @@
 /**
  ********************************************************************************
- * @file    espnow_link.c
+ * @file    gpio.c
  * @author  Andrew Bevelhymer
- * @date    2024/09/13
- * @brief   Implements high level interface for esp now communications
+ * @date    2024/09/21
+ * @brief   Implements high level interface for gpio
  ********************************************************************************
  */
 

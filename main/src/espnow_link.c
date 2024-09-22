@@ -170,7 +170,7 @@ ESPNOW_LINK_ERR_T espnow_link_get_device_mac(const uint8_t* buffer)
 {
     memcpy(buffer, device_mac, MAC_LENGTH_BYTES_D);
 
-    return ESPNOW_LINK_ERR_NONE;
+    return ESPNOW_LINK_ERR_NONE; /* TODO: Should return error if not init */
 }
 
 ESPNOW_LINK_ERR_T espnow_link_read(const ESPNOW_LINK_MSG_T* msg_buffer)
