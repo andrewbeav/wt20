@@ -18,12 +18,13 @@ extern "C" {
  * INCLUDES
  ************************************/
 #include <stdint.h>
+#include <stdbool.h>
 #include "esp_now.h"
 
 /************************************
  * MACROS AND DEFINES
  ************************************/
-#define ESPNOW_DATA_BYTES ESP_NOW_MAX_DATA_LEN
+#define ESPNOW_DATA_BYTES 250U
 #define ESPNOW_LINK_QUEUE_LENGTH (16U)
 
 /************************************
